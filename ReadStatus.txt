@@ -1,0 +1,14 @@
+status:
+
+Docker Containers and Kubernetes Fundamentals – Full Hands-On Course
+
+https://www.youtube.com/watch?v=kTp5xUtcalw&list=PLeL6cuLrME0BlU8ta9LUIBoh43h_mJjnY&index=16&t=273s
+
+10Dec2023: 45.19
+12Dec2023: 58.21
+23Dec2023: 1:16
+24Dec2023: 1:51
+25Dec2023: 1.57  # Kuuberetes a.k.a K8s
+25Dec2023: 2.00  # Read K8s before starting video : https://kubernetes.io/docs/concepts/overview/
+25Dec2023: 2.07
+26Dec2023: 2.29

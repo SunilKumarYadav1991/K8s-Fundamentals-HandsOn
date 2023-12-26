@@ -1,0 +1,319 @@
+//-----------------------------------------------------------------------------------------------------------------
+            Basic docker cmd
+//-----------------------------------------------------------------------------------------------------------------
+
+>> Pull nginx image
+docker pull nginx:latest
+
+>> List all docker images present in system
+docker images
+
+>> Run docker image as container. Give name to container 'webserver'
+docker run --publish 80:80 --name webserver nginx
+Note: use -d to run in detached mode
+
+>> show all running and terminated container
+docker ps -a
+
+>> Stop running container
+docker stop webserver
+
+>> Kill running container
+docker kill webserver
+
+>> remove docker container from local machine (stopped state)
+docker rm webserver
+
+docker rm  $(docker ps -a -q)     # Removes all stoped container
+
+docker rmi [imageName]            # Delees the image
+
+docker system prune -a            # Removes all images not in use by any container
+
+>> Docker compose allows users to create yaml file to start multiple service/containers with defined attribute.
+
+
+docker build -t [name:tag] .     # builds an image using a Dockerfile located in the same folder
+
+docker build -t [name:tag] -f [fileName]     # builds an image using a Dockerfile located in different folder
+
+docker tag [imageName] [name:tag]            # Tag an existing image
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Volume commands
+//-----------------------------------------------------------------------------------------------------------------
+docker create volume [volume name]                      # Creaes a new volume
+
+docker volume ls                                        # List the volumes
+
+docker volume inspect [Volume Name]                     # Displays the volume info
+
+docker volume rm [Volume Name]                          # Deletes a volume
+
+docker volume prune                                     # Delete all volume not mountedd
+
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            YAML
+//-----------------------------------------------------------------------------------------------------------------
+YAML : YAML Ain't Markup Language
+Seialization standard and deafult for docker
+
+YAML Lint to parse and raise warring if there is any issue
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Docker compose
+//-----------------------------------------------------------------------------------------------------------------
+Define and run multi container application
+Define using YAML files
+Run using the dokcer CLI with the compose plugin (Docker compse)
+
+docker compose vs docker-compse: 
+    - docker-compse was Compose V1  wich uses python in backend
+    - dokcer compose is introduce in Compose V2 (DockerCon Live 2022). Faster version
+        - Installed with Docker Desktop
+            - Linux: apt-get install docker compose-plugin
+
+-- Docker compose commands
+
+docker compose build                                # Build the images
+
+docker compose start                                # Start the containers
+
+docker compose stop                                 # stop the containers
+
+docker compose up -d                                # Build and start
+
+docker compose ps                                   # List what's running
+
+docker compose rm                                   # Remove from memory
+
+docker compose down                                 # Stop and remove
+
+docker compose log                                  # Get the logs
+
+docker compose exec [container] bash                # Run a command in a conainer
+
+Note: Once docker compose command run, we can not create another container as earlier instance already have containers running but with Compose V2 its possible.
+//------ Compose V2 commands
+
+docker compose --project-name test1 up -d           # Run an instance as a projet
+
+docker compose -p test2 up -d                       # shortcut of above command
+
+docker compose compose ls                           # List running projects
+
+docker compose cp [containerID]:[SRC_PATH] [DEST_PATH] # copy files from the containers
+
+docker compose cp [SRC_PATH] [containerID]:[DEST_PATH] # copy files to the containers
+
+
+_________________________________________________________________________________________________________________________________________________________________________________________________
+//-----------------------------------------------------------------------------------------------------------------
+            Kubernetes a.k.a. K8s
+//-----------------------------------------------------------------------------------------------------------------
+Originated from Google
+v1.0 releaseed on July 2015
+3rd gen container schduler from Google
+   - Previously Google internal project: Bor and Omega
+Donated to the Cloud Native Computing Foundation (CNCF): www.cncf.io
+
+What is Kubernetes?
+- K8x is the leading continer orchestration tool
+- Designed as a looly coupled collection of componentes centered around deploying, maintainig and scalin workloads
+- Vendor nutral
+
+What K8s can do?
+- Service discovery and load balancing
+- Storage orchestration
+  - Loal or Cloud based
+- Automated rollouts and rollbacks
+- self healing
+- secre and configuratio management
+- use the same API across on-premise and every cloud providers
+
+What K8s can't do?
+- Does not deploy source code
+- Does not build your application
+- Does not provide application-level servies
+  - Mesage buses, databases, caches etc
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            K8s Resources
+//-----------------------------------------------------------------------------------------------------------------
+ https://kubernetes.io/docs/concepts/overview/
+ 
+Local K8s (Requires Virtualization)
+- Docker Desktop
+    - Limited to 1 Node
+- MicroK8s (From Ubuntu)
+    - Multiple Nodes
+- Minikube
+    -  Multiple Nodes
+- 'Kind' :runs over Docker Desktop and provide extra functionality
+    - Multiple Nodes
+
+Note: Minikube can be installed on Hyper-V or VirtualBox
+
+
+Minikuvbe Hyper-V Installation:
+- Run windows terminal or powershell in admin mode
+- Install Chocolatey package manager
+- Run: choco install minikube
+- Create network switch
+    - New-VMSwitch -Name "MinikubeNAT" -AllowManagement $True - NetAdapterName "<adapter_name>"
+- Start Minikube
+    - minikuber start --vm-driver hyperv --hperv-virtual-switch "MinikubeNAT"
+- Switch context
+    - kubectl config use-context minikube
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            kubectl aka CLI and Context
+//-----------------------------------------------------------------------------------------------------------------
+kubectl (KUBE C-T-L or KUBE KUTTLE or Kube Control) is Kubernetes CLI
+Communicates with teh apiserver
+configuration stored locally:
+    - ${HOME}/.kube/config
+    - C:\Users\{USER}\.kube\config
+
+K8s Context:
+--------------------------
+- A context is a group of access parameters to a K8s cluster
+- Contains a Kubernetes cluster, a user, and a namespace
+- The current context is the cluster that is curently the default for kubectl
+    - All kubctl commands run against that cluster
+
+
+kubectl config current-context                           # Get the curent context
+Kubectl config get-contexts                              # List all context
+Kubectl config use-context [contextName]                 # Set the current context
+Kubectl config delete-context [contextName]              # Delete a context from the config fle
+
+//-----------------------------------------------------------------------------------------------------------------
+            Imperative way vs Declarative way in Kubernetes
+//-----------------------------------------------------------------------------------------------------------------
+Imperative:
+  - Using kubectl commands, issue a series of commands to create esources 
+  - Great for learning, testing and troubleshooting
+  - It's like code
+Declarative:
+  - Using kubectl and YAML mainfests defining the resources that you need
+  - Reproducible, repeatable
+  - Can be saved in source control
+  - It's like datat that can be parsed and modified
+
+
+
+## Imperative
+
+    kubectl create deployment mynginx1 --image=nginx
+
+## Declarative
+
+    kubectl create -f deploy-example.yaml
+
+## Cleanup
+
+    kubectl delete deployment mynginx1
+    kubectl delete deploy mynginx2
+
+kubectl get deploy                                     # To get list of deployment
+
+//-----------------------------------------------------------------------------------------------------------------
+            Namespaces
+//-----------------------------------------------------------------------------------------------------------------
+- Allow to group resources. Ex. Dev, Test, Prod
+- K8s creates a deafult workspace: default
+- Objects in one namespace can access object in a different namespace.
+    - Ex: objectname.prod.svc.cluster.local
+- Deleting a namespace will delete all its child object
+
+
+kubectl get namespace                                  # List all namespace
+kubectl get ns                                         # List all namespace: Shortcut
+
+kubectl config set-context --curent --namespace=[namespaceName]  # set the current contectto use a namespace
+
+kubectl create ns [namespaceName]                      # Create a namespace
+
+kubectl delete ns [namespaceName]                      # Delete a namespace
+
+kubectl get pods --all-namespaces                      # List all pods in all namespace
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Nodes
+//-----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
