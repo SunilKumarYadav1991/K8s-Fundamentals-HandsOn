@@ -34,6 +34,8 @@ Let’s now create a node running BusyBox, this time attaching bash to our termi
 ## Cleanup
 
     kubectl delete pod mybox
+    or
+    kubectl delete pod mybox --grace-period=0 --force
 
 ## Create a pod using the declarative way
 

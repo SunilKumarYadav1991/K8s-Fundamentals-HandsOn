@@ -247,26 +247,133 @@ kubectl get pods --all-namespaces                      # List all pods in all na
 
 
 //-----------------------------------------------------------------------------------------------------------------
-            Nodes
+            Kubernetes components
+//-----------------------------------------------------------------------------------------------------------------
+---------Master node----------
+
+kube-apiserver
+- REST Interface
+- Save state to the datastor (etcd)
+- All clients interact with it, never directly to the datastore
+
+
+etcd
+- Act as the cluster datastore for storing state
+- Key-value stored
+- Not a database or a datastore for application to use
+- The single source of truth
+
+
+
+kube-control-manager
+- The controller of controllers!
+- It runs controllers
+  - Node controller
+  - Replicate controller
+  - Endpoints controller
+  - Service account & Token controllers
+
+
+cloud-control-manager
+- Interact with the cloud providers controllers
+  - Node
+     - For cvhecking the cloud provider to determine if a node has been deleted in cloud after it stops responding
+  - Route
+     - For setting up routes in ther underlying cloud infrastruture
+  - Service
+     - For creating, updating and deleting cloud provider load balancer
+  - Volume
+     - For creating, attaching, and mounting volumes, and interacting with the cloud provider to orchestrate volumes.
+
+
+Kube-scheduler
+- Watches newly created pods that have no node assigned, and selects a node for them to run on
+- Factors taken into  account for scheduling decisions include
+  - individual and collective resource requirments
+  - Hardware/software/policy constraints
+  - Affinity and anti-affinity specifications
+  - Data locality
+
+
+Addons
+- DNS
+- Web UI (Dashboard)
+- Cluster-level logging
+- Container resource monitoring
+
+---------Worker node----------
+
+kube-proxy
+- A network proxy
+- Manages network rules on nodes
+
+kubelet
+- Manag the pods lifecycle
+- Ensure that the container described in the Pod specs are running and healthy
+
+container runtime
+- K8s support several container runtimes
+- Must implement the kubernetes Container Runtime Interface
+  - Moby
+  - Containerd
+  - Cri-)
+  - Rkt
+  - Kata
+  - Virtlet
+
+
+Pods
+- Atomic unit of the smallest unit of work of K8s
+- Encapsulates an application's container
+- Represents a unit of deployments
+- Pods can run one or multiple container
+- Container within a pod share
+  - IP address space, mounted volumes
+- Containers within a pod can communicate via
+  - Localhost, IPC
+- Pods are ephemeral
+- Deploying a po is an atomic operation, it succeed or not
+- If a pod fails, it is replaced with a new one with a shiny new IP address
+- You don't update a pod, you replace it with an updated version
+- You scale by adding more pods, not more containers in a pod
+
+
+Pod Lifecycle:
+Pod States are:
+- Pending
+  - Accepted but not yet created
+- Running
+  - Bound to a node
+- Succeeded
+  - Exited with Status 0
+- Failed
+  - All containers exit and at least  oe exited with non-zero status
+- Unknow
+  - Communication issues with the pod
+- CrashLoopBackOff
+  - Started, crashed, started again, and then creashed again
+  
+//-----------------------------------------------------------------------------------------------------------------
+            Kubectl Pod commands
 //-----------------------------------------------------------------------------------------------------------------
 
+kubectl create -f [pod-definition.yml]                           # Create a pod
 
+kubectl run [podname] --image=busybox -- /bin/sh -c "sleed 3600"     # Run a pod-definition
 
+kubectl get pods                                                 # List the running pods
 
+kubectl get pods -o wide                                         # Same but with more info
 
+kubectl describe pod [Podname]                                   # Show pod info
 
+kubectl get pood [podname] -o yaml > file.yaml                   # Extract the pod definition in YAML and save it to a file
 
+kubectl exec -it [podname] -- sh                                 # Interactive mode
 
+kubectl delete -f [pod-definition.yml]                           # delete a pod
 
-
-
-
-
-
-
-
-
-
+kubectl delete pop [podname]                                     # same using the pod's name
 
 
 
