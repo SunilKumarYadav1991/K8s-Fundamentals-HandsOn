@@ -1,0 +1,37 @@
+#Linux Namespaces
+
+Linux command to create namespace
+- unshare -p -f --mount-proc <command>
+- unshare -p -f --mount-proc /bin/bash           # Bash will run as sperate namespace
+
+View process tree of process:
+- pstree -p <PID>
+- pstree                  # shows all process hierarchy n tree form
+
+
+PID of docker:
+- ex: pid=$(docker container inspect -f "{{.State.Pid}}" c2)              # Here c2 is container names
+      echo $pid                                                           # Prints the PID
+
+
+In order to run containers, linux require below namespaces
+- cgroup    #control group
+- ipc
+- mnt
+- net
+- pid
+- pid_for_children
+- user
+- uts
+
+In linux /proc directory stores all the process related information. E.g. above sample c2 conainer was ubuntu container then running below command will give informaiton about container
+
+
+ls -l /proc/21289                        # 21289 is PID of container and output will be all the container related directory and associated data
+
+
+https://www.youtube.com/watch?v=Z7swPxOeRzM&list=PLeL6cuLrME0BlU8ta9LUIBoh43h_mJjnY&index=32&t=31s
+read status: 56.00
+
+
+

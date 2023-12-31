@@ -377,30 +377,67 @@ kubectl delete pop [podname]                                     # same using th
 
 
 
+Init containers: Runs inside pod before running application container. 
+E.g. init container can run and check if database is up and running before running actual application container
+
+- Alwayas runs to completion
+- Each init container must complete successfully before the next one starts
+- If ifails, the kubelet repeatedly restarts it until it succeeds
+  - Unless it's restartPolicy is set to Never
+- Probes are not supported
+  - livenessProbe, readinessProbe, or startupProbe
 
 
+//-----------------------------------------------------------------------------------------------------------------
+            Selectors
+//-----------------------------------------------------------------------------------------------------------------
 
 
+Labels : Ke-value pairs used to identify, describe and group related sets of objects or reources. These pairs are user defined.
+Example:
+  labels:
+    app: myapp
+    type: front-end
 
 
+Refer: K8s-Fundamentals-HandsOn\L22-02 Selectors for exposing container as service on localhost
 
 
+//-----------------------------------------------------------------------------------------------------------------
+            Multi-containner Pods
+//-----------------------------------------------------------------------------------------------------------------
+
+Typical patterns - Sidecar
+---------------------------
+Container within Pod
+  1. App: focuses on core buisness logic. E.g. it write some logs to files.
+  2. Sidecar: Copy the log files to peristent storage (eg. storage provided by cloud provider)
+
+Typical patterns - Adaptor
+---------------------------
+
+Typical patterns - Ambassador
+---------------------------
+
+Book: O'reilly  Designing Distrubuted Systems Patterns and paradigms for scalable, reliable services (Berndan Burns)
 
 
+kubectl create -f [pod-definition.yml]                             # Create a pod
+
+kubectl exec -it [podname] -c [containername] -- sh                # Exec into a pod
+
+kubectl logs [podname] -c [containername]                          # Get the loogs for a container
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+---------------------
+Networking Concepts:
+---------------------
+- All containers within a pod can communicate with each other (using local host by differnet port number)
+- All pods can communicate with each other: Using service
+- All nodes can communicate with all pods
+- Pods are given an IP address (ephemeral i.e. lasting for a very short time)
+- **Serices are given a persistent IP**
+* External
 
 
 

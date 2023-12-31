@@ -20,6 +20,7 @@ Let’s create multiple containers in a Pod using a YAML file.  We'll use the Bu
 This will output the content of the Web page in the terminal.
 
     wget -qO- localhost
+Note: Since nginx runs on port 80, we didn't need to specify port no. in above command but if nginx was running on some different port then we need to add port no.
 
 ## Quit
 
