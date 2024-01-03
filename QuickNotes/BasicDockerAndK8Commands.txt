@@ -590,3 +590,133 @@ kubectl describe job [jobName]                                 # Get info
 kubectl delete -f [definition.yaml]                            # Delete a Job
 
 kubectl delete job [jobName]                                   # Same but using the Job name
+
+
+CronJob
+----------
+- An extesion of the Job
+- Provides a method of executing jobs on a cron-like scheduler
+- UTC only
+* * * * *
+refer: https://en.wikipedia.org/wiki/CronJob
+
+How to know if cronJob is successful? Using history to view logs of few pods.
+- History
+  - The last 3 successful jobs are kept (by default)
+  - The last failed job is kept
+  - Setting successfulJobHistoryLimit to zero keeps none
+  
+kubectl create cronjob [jobName] --image=busybox --schedule="*/1 * * * *" -- bin/sh -c "date;"                   # The imperative way
+
+kubectl apply -f [definition.yaml]                            # Create a CronJob
+
+kubectl get cj                                                # List CronJob alterate command: kubectl get cronjobs
+
+kubectl describe cj [jobName]                                 # Get info
+
+kubectl delete -f [definition.yaml]                           # Delete a CronJob
+
+kubectl delete cj [jobName]                                   # Same but using the CronJob name
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Updates
+//-----------------------------------------------------------------------------------------------------------------
+
+Strategy: 
+1. Recreate
+  - Delete existing pods and create new pods
+  - Hence service may not be available for small amount of time
+2. RollingUpdate
+  - maxSurge
+    - Maximum number  of Pods that can be created over the desired number of Pods
+	- Value or percentage
+  - maxUnavailable
+    - Maximum number of Pods that can be unavailable during the update processor
+  - Default strategy with maxSurge and maxUnavailable both set to 25%
+
+kubectl apply -f [definition.yaml]                            # Update a deployment
+
+kubectl rollout status                                        # Get the progress of the update
+
+kubectl rollout history deployment [deploymentName]           # Get the history of the deployment
+
+kubectl rollout undo [deploymentName]                         # Rollback a deployment
+
+kubectl rollout undo [deploymentName] --to-revision=[revision#]        # Rollback to a revision number
+
+
+
+Blue-Green Deployments
+-----------------------
+While deploying newer version of application via rollout method it may happen the newer version of app uses new db schema and which result in failure.
+
+Blue: What's in production
+Green: Newer version deployed but not yet in production
+
+Below diagram shows how Blue Green deployment work
+1.
+
+            master node (V1) [Blue]
+				 |
+			 ____|_____
+			/          \
+    (v1)[Blue]   (v1)[Blue]        (V2)[Green]   (V2)[Green]
+
+2.
+            master node (V2) [Blue]
+				 |_______________________________
+											 ____|_____
+											/          \
+    (v1)[Green]   (v1)[Green]        (V2)[Blue]   (V2)[Blue]
+
+Note: 
+- Above deplyment strategy still does not solve above discussed new db schema problem entirly.
+- We need to provision cluster size
+Refer "L25-04 Blue-Green Deployments" for quick info
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Services
+//-----------------------------------------------------------------------------------------------------------------
+
+ClusterIP
+---------
+- ClusterIP is the default service
+- Visibility
+  - Cluster internal
+- Port: The port the service is listening to
+- TargetPort: Redirecting to the port the pod(s) are listening to
+- Load balanced using round robin
+  - Session affinity is configurable
+- When to use
+  - To provide a durable way to communicate with pods inside the cluster
+
+# Service Defination example
+apiVersion: v1
+kind: Service
+metadata:
+ name: svc-front
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080                 # Due to this cotainer port spec should also use same port. i.e. - containerPort: 8080
+  selector:
+    app: hello-v1
+
+
+kubectl expose po [podName] --port=80 --target-port=8080 --name=frontend                   # Create a service to expose a pod
+
+kubectl expose deploy [deployName] --port=80 --target-port=8080                            # Create a service to expose a pod
+
+kubectl apply -f [definition.yaml]                            # Deploy service
+
+kubectl get svc                                               # Get service list
+
+kubectl get svc -o wide                                       # Get extra info
+
+kubectl describe svc [serviceName]                            # Describe the service
+
+kubectl delete -f [definition.yaml]                           # Delete the service
+
+kubectl delete svc [serviceName]                              # Delete the serviceusing the serviceName name
