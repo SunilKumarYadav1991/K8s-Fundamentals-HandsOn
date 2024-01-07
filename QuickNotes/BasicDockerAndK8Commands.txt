@@ -720,3 +720,224 @@ kubectl describe svc [serviceName]                            # Describe the ser
 kubectl delete -f [definition.yaml]                           # Delete the service
 
 kubectl delete svc [serviceName]                              # Delete the serviceusing the serviceName name
+
+
+
+NodePort
+---------
+- NodePort extend the ClusterIP service
+- Visibility: Internal and External
+- NodePort:
+  - The port the service is listening to externally
+  - Statically defined, or dynamically taken from a range between 30000-32767
+- Port: The port the service is listening to internally
+- Nodes must have public IP addresses
+- Use any Node IP + nodePort to access the service
+
+
+kubectl expose po [podName] --port=80 --target-port=8080 --type=NodePort                                 # Create a service to expose a pod
+
+kubectl expose deploy [deployName] --port=80 --target-port=8080 --type=NodePort --name=frontend          # Create a service to expose a pod
+
+kubectl apply -f [definition.yaml]                            # Deploy service
+
+kubectl get svc                                               # Get service list
+
+kubectl get svc -o wide                                       # Get extra info
+
+kubectl describe svc [serviceName]                            # Describe the service
+
+kubectl delete -f [definition.yaml]                           # Delete the service
+
+kubectl delete svc [serviceName]                              # Delete the serviceusing the serviceName name
+
+
+
+Services
+---------
+- A service is another type of K8s object
+- Pod IPs are unreliable but service Ips are
+- Durable (unlike pods)
+  - Static IP address
+  - Static DNS name
+  - [servicename].[namespace].svc.cluster.local
+- Services are ways to access pods
+- Target pods using selectors
+
+
+Services are of below types:
+- ClusterIP: Visibility internal
+- NodePort: Exposes node to externally
+- LoadBalancer (L4)
+- Ingress (L7)
+
+Load Balancing
+------------------
+- Layer 4 Load Balancing
+  - Operating at the transport level (TCP)
+  - Unable to make decisions based on content
+  - Simple algorithms such as round-robin routing
+- Layer 7 Load Balancing
+  - Operates at the application level (HTTP, SMTP, etc)
+  - Able to make decisions based on the actual content of each message
+  - More intelligent load balancing deisions and content optimizations
+    - Routing rules
+
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Storage & Persistence
+//-----------------------------------------------------------------------------------------------------------------
+- We need to store data outside the container in a Volume
+- Volumes let containers store data into external storage systems
+- Vendors ceate plugins for their storage sstems according to the Container Storage Interface
+- Two ways to create storage: Static and Dynamic
+
+1. Persistent Volume 
+2. StorageClass
+
+Storage - Static way
+---------------------
+
+-----------------------------
+Persistent Volumes and Claims
+-----------------------------
+- Persistent Volumes 
+  - Represent a storage resource
+  - Cluster wide
+  - Provisioned by an administrator
+- Persistent Volume Clain
+  - A one to one mapping to a persistent volume
+- One or more pods can use a Persistent Volume Claims
+- Can be consumd by any of ther containers within the pod
+
+Below are few of the popular PV plugins
+GCEPersistentDisk
+AWSElasticBlockStore
+AzurFile
+CSI
+FC (Fibre Channel)
+FlexVolume
+Flocker
+NFS
+iSCSI
+RBD (Ceph Block Device)
+CephFS
+Cinder (OpenStackblock storage)
+Glusterfs
+VsphereVolume
+Quobyte Volumes
+Portworx Volumes
+ScalelO Volumes
+StorageOS
+*HostPath*: Single Node testing only -- Local storage is not supported in any way and will not work in a multi-node cluster
+
+Reclaim Policies:
+------------------
+- Delete (Default)
+  - Deletes the data upon pod deletion
+- Retain
+  - Keeps the data upon pods deletion
+
+Access Mode
+------------------
+- ReadWriteMany
+  - The volume can be mounted as read-write by many pods
+- ReadOnlyMany
+  - The volume can be mounted read-only by many pods
+- ReadWriteOnce
+  - The volume can be mounted as read-write by a single pod
+  - The other pods are in read only mode
+  - The one that has mounted the volume first will be able to write
+
+
+Persistent Volume States
+------------------------
+- Aavailable
+  - A free resource that is not yet bound to a claim
+- Bound
+  - The volume is bound to a claim
+- Released
+  - The claim has been deleted, but the resource is not yet relclaimed by the cluster
+- Failed
+  - The volume has failed its automatic reclaimation
+
+
+
+kubectl apply -f [definition.yaml]                            # Deploy the PVs and PVCs
+
+kubectl get pv                                                # Get the PV list
+
+kubectl get pvc                                               # Get the PVC list
+
+kubectl describe pv [pvName]                                  # Describe the PV
+
+kubectl describe pvc [pvcName]                                # Describe the PVC
+
+kubectl delete -f [definition.yaml]                           # Delete the PVs and PVCs
+
+kubectl delete pv [pvName]                                    # Delete the pv using it's name
+
+kubectl delete pvc [pvcName]                                  # Delete the pvc using it's name
+
+
+-------------
+StorageClass
+-------------
+- Describes the "classes" of storage offered by the admin
+- An abstraction on top of an external storage resource
+- No need to set a capacity
+- Eliminates the need for the admin to pre-provision a persistent volume 
+
+Reclaim Policies:
+------------------
+- Delete (Default)
+  - Deletes the data upon pod deletion
+- Retain
+  - Keeps the data upon pods deletion
+
+Access Mode
+------------------
+- ReadWriteMany
+  - The volume can be mounted as read-write by many pods
+- ReadOnlyMany
+  - The volume can be mounted read-only by many pods
+- ReadWriteOnce
+  - The volume can be mounted as read-write by a single pod
+  - The other pods are in read only mode
+  - The one that has mounted the volume first will be able to write
+
+
+kubectl apply -f [definition.yaml]                            # Deploy the StorageClass and PVC
+
+kubectl get sc                                                # Get the StorageClass list
+
+kubectl get pvc                                               # Get the PVC list
+
+kubectl describe sc [className]                               # Describe the StorageClass
+
+kubectl delete -f [definition.yaml]                           # Delete the StorageClass and PVC
+
+kubectl delete sc [className]                                 # Delete the StorageClass using it's name
+
+kubectl delete pvc [pvcName]                                  # Delete the pvc using it's name
+
+
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Application Settings
+//-----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+

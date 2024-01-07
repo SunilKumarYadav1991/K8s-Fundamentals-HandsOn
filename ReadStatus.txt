@@ -20,3 +20,5 @@ https://www.youtube.com/watch?v=kTp5xUtcalw&list=PLeL6cuLrME0BlU8ta9LUIBoh43h_mJ
 1Jan2023: 4.00
 2Jan2023: 4.15  # complete L25-02 Rolling Updates excercise
 3Jan2023: 4.31
+7Jan2023: 4.51
+7Jan2023: 5.04
