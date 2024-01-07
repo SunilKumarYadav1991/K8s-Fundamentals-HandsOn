@@ -928,16 +928,79 @@ kubectl delete pvc [pvcName]                                  # Delete the pvc u
 //-----------------------------------------------------------------------------------------------------------------
             Application Settings
 //-----------------------------------------------------------------------------------------------------------------
+Like in docker, we can use environment variable to influence the working of container, in K8s we can achieve same using object like ConfigMaps.
+
+
+ConfigMaps
+-----------
+- Decouple and externalize configuration
+- Referenced as environment variables
+- Created from
+  - Manifests
+  - Files
+  - Directories (containing one or mor files)
+- Static meaning that if you change values, the containers will have to be restarted to get them
+
+ConfigMaps and Volumes
+-----------------------
+- Solves the static issue mentioned above
+- Updates to values are refelected in containers
+- Each key/Value pair is seen as a file in the mounted directory.
 
 
 
+kubectl create configmap literal-example --from-literal="city=Ann Arbor" --from-literal=state=Michigan       # The imperative way
+
+kubectl apply -f [cf.yaml]                                    # The declarative way
+
+kubectl create cm [ame] --from-file=myconfig.txt              # From a file
+
+kubectl create cm [ame] --from-file=config/                   # From a folder
+
+kubectl get cm                                                # List the ConfigMaps
+
+kubectl get cm [name] -o YAML                                 # Save the ConfigMaps in a YAML file
+
+kubectl delete -f [cf.yaml]                                   # Delete a ConfigMap
 
 
 
+-----------
+Secrets
+-----------
+Various types of Secrets. Refer Screenshot for more info.
+
+Opaque : Arbitary user-defined data. Similar to ConfigMaps
+
+
+- Stored as base64 encoded strings
+- Not secure as ase64 strings are not encrypted
+
+- Should you use secrets? Depends upone the use cases. More sensetive data should be avoided.
+- Protect them using RBAC authorization policies
+- Store secrets elsewhere
+  - Cloud providers offer ways to secure these secrets
+     - Azure Key Vault
+	 - AWS Key Management Service
+	 - Google Clou KMS
+  - HarshiCorp Vault: https://www.vaultproject.io
+
+
+kubectl create secret generic [secretName] --from-literal=STATE=Michigan       # The imperative way
+
+kubectl apply -f [secret.yaml]                                      # The declarative way
+
+kubectl get secrets                                                 # List the Secrets
+
+kubectl get secrets [secretName] -o YAML                            # Save a Secret in a YAML file
+
+kubectl delete -f [secret.yaml]                                     # Delete a secret
+
+kubectl delete secrets [secretName]                                 # Delete a secret
 
 
 
-
-
+  
+  
 
 
