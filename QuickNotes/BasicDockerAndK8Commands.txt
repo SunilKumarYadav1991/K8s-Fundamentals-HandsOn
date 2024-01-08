@@ -1000,7 +1000,78 @@ kubectl delete secrets [secretName]                                 # Delete a s
 
 
 
+//-----------------------------------------------------------------------------------------------------------------
+            Obervability
+//-----------------------------------------------------------------------------------------------------------------
+
+Probes
+---------
+- Startup probes
+  - To know when a container has started
+- Readiness Probes
+  - To know when a container is ready to accept traffic
+  - A failing readiness probe will stop the application from receiving traffic
+- Liveness Probes
+  - Indicates whether the code is running or not
+  - A failing Liveness Probes will restart the container
+
+Probing the container:
+- The kubelet checks periodically the containers using probes
+- ExecAction
+  - Execute a command inside the container
+- TCPSocketAction
+  - Check if a TCP socket port is open
+- HTTPGetAction
+  - Performs an HTP GET against a specific port and path
+
+
+//-----------------------------------------------------------------------------------------------------------------
+            Dashboards
+//-----------------------------------------------------------------------------------------------------------------
+
+Kubernetes CLI:
+kubectl create -f deploy.yaml
+kubectl get pods -o wide
+kubectl top nodes
+kubectl logs mypod
+
+
+3 dashboards:
+-------------
+- K8s
+- Lens
+- K9s
+
+Dashboard - Web UI
+-------------------
+- Kubernetes offers a Web UI
+- Not installed by default by
+  - Docker Desktop
+  - AWS EKS
+  - Azure AKS
+  - GCP GKE
+  - Linode LKE
+- Don't install it if not needed: Its inernal and hence need to be expsed to be accessible. Can be used as attack vector
+
+
+Lens
+--------
+- Kubernetes IDE
+- Runs locally
+  - Mac, Windows, Linux
+- Built-in terminal
+- Maintained by Mirantis
+  - htttps://k8slens.dev
   
   
+Dashboard- Lens
+-----------------
+- Dashboard in a terminal!
+- Windows: choco install k9s
+- Mac: brew install k9s
+- Linux: https:github.com/derailed/k9s
+
+
+
 
 
