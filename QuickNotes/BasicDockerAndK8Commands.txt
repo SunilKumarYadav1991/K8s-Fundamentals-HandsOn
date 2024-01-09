@@ -1062,8 +1062,8 @@ Lens
 - Built-in terminal
 - Maintained by Mirantis
   - htttps://k8slens.dev
-  
-  
+
+
 Dashboard- Lens
 -----------------
 - Dashboard in a terminal!
@@ -1071,6 +1071,22 @@ Dashboard- Lens
 - Mac: brew install k9s
 - Linux: https:github.com/derailed/k9s
 
+
+//-----------------------------------------------------------------------------------------------------------------
+            Scaling Pods
+//-----------------------------------------------------------------------------------------------------------------
+
+Horizontal Pod AutoScaling: Uses metric server
+
+kubectl autoscale deployment [name] --cpu-percent=50 --min=3 --max=10       # The imperative way
+
+kubectl apply -f [hpa.yaml]                                         # The declarative way
+
+kubectl get hpa [name]                                              # Get the autoscaler status
+
+kubectl delete -f [hpa.yaml]                                        # Delete the HPA
+
+kubectl delete hpa [name]                                           # Delete the HPA
 
 
 
